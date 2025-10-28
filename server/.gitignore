@@ -1,0 +1,41 @@
+# ==========================================
+# BACKEND (Go)
+# ==========================================
+
+# Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+whisper
+whisper-api
+main
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool
+*.out
+*.coverprofile
+coverage.*
+profile.cov
+
+# Go workspace file
+go.work
+go.work.sum
+
+# Dependency directories
+vendor/
+
+# Air (hot reload) temp files
+tmp/
+.air.toml.tmp
+
+# Database files (local development)
+*.db
+*.sqlite
+*.sqlite3
+
+# Backup files
+*.bak
