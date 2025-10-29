@@ -1,21 +1,29 @@
 package main
 
 import (
-	"fmt"
+	"log"
 
-	"github.com/joho/godotenv"
 	"github.com/josevitorrodriguess/whisper/server/internal/config/firebase"
 	"github.com/josevitorrodriguess/whisper/server/internal/database"
+	"github.com/josevitorrodriguess/whisper/server/internal/handler"
+	"github.com/josevitorrodriguess/whisper/server/internal/repository"
+	"github.com/josevitorrodriguess/whisper/server/internal/router"
+	"github.com/josevitorrodriguess/whisper/server/internal/services"
 )
 
 func main() {
-	godotenv.Load()
-	database.ConnectDatabase()
-
 	app, err := firebase.GetFireBaseApp()
 	if err != nil {
-		panic(err)
+		log.Fatalf("error to initialize firebase: %v", err)
 	}
 
-	fmt.Println("Firebase App initialized:", app)
+	db := database.ConnectDatabase()
+
+	userRepo := repository.NewUserRepository(db)
+	userService := services.NewUserService(*userRepo)
+	userHandler := handler.NewUserHandler(userService)
+
+	r := router.SetupRouter(userHandler, app)
+
+	r.Run(":8080")
 }
