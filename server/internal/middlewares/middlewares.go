@@ -7,6 +7,7 @@ import (
 
 	firebase "firebase.google.com/go/v4"
 	"github.com/gin-gonic/gin"
+	"github.com/josevitorrodriguess/whisper/server/internal/models"
 )
 
 func FirebaseAuthMiddleware(app *firebase.App) gin.HandlerFunc {
@@ -23,7 +24,7 @@ func FirebaseAuthMiddleware(app *firebase.App) gin.HandlerFunc {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization header missing"})
 			c.Abort()
 			return
-		}	
+		}
 
 		idToken := strings.TrimPrefix(authHeader, "Bearer ")
 		token, err := authClient.VerifyIDToken(context.Background(), idToken)
@@ -36,4 +37,29 @@ func FirebaseAuthMiddleware(app *firebase.App) gin.HandlerFunc {
 		c.Set("firebaseUID", token.UID)
 		c.Next()
 	}
+}
+
+func ExtractUserInfos(app *firebase.App, tokenID string) (models.User, error) {
+	authClient, err := app.Auth(context.Background())
+	if err != nil {
+		return models.User{}, err
+	}
+
+	token, err := authClient.VerifyIDToken(context.Background(), tokenID)
+	if err != nil {
+		return models.User{}, err
+	}
+
+	userRecord, err := authClient.GetUser(context.Background(), token.UID)
+	if err != nil {
+		return models.User{}, err
+	}
+
+	user := models.User{
+		ID:       userRecord.UID,
+		Email:    userRecord.Email,
+		Username: userRecord.DisplayName,
+	}
+
+	return user, nil
 }
