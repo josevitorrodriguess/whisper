@@ -6,14 +6,19 @@ import (
 )
 
 type UserService struct {
-	repo repository.UserRepository
+	repo *repository.UserRepository
 }
 
-func NewUserService(repo repository.UserRepository) *UserService {
+func NewUserService(repo *repository.UserRepository) *UserService {
 	return &UserService{repo: repo}
 }
 
-
-func (s *UserService) RegisterUser(user *models.User) error {
-	return s.repo.CreateUser(user)
+func (s *UserService) CreateUser(u *models.User) (*models.User, error) {
+	if u == nil {
+		return nil, nil
+	}
+	if err := s.repo.CreateUser(u); err != nil {
+		return nil, err
+	}
+	return s.repo.GetByFirebaseUID(u.ID)
 }

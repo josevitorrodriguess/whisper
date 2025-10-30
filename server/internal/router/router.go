@@ -8,6 +8,7 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/josevitorrodriguess/whisper/server/internal/handler"
+	"github.com/josevitorrodriguess/whisper/server/internal/middlewares"
 )
 
 func SetupRouter(userHandler *handler.UserHandler, firebaseApp *firebase.App) *gin.Engine {
@@ -28,6 +29,9 @@ func SetupRouter(userHandler *handler.UserHandler, firebaseApp *firebase.App) *g
 
 	user := r.Group("/user")
 	{
+		user.Use(middlewares.FirebaseAuthMiddleware(firebaseApp))
+
+		
 		user.POST("/register", userHandler.RegisterUser)
 	}
 
