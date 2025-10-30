@@ -31,8 +31,8 @@ func SetupRouter(userHandler *handler.UserHandler, firebaseApp *firebase.App) *g
 	{
 		user.Use(middlewares.FirebaseAuthMiddleware(firebaseApp))
 
-		
-		user.POST("/register", userHandler.RegisterUser)
+		user.POST("/register", userHandler.RegisterUserHandler)
+		user.DELETE("/delete", userHandler.DeleteAccountHandler)
 	}
 
 	return r

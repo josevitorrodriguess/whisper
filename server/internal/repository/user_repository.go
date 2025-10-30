@@ -17,7 +17,7 @@ func (r *UserRepository) CreateUser(user *models.User) error {
 	return r.DB.Create(user).Error
 }
 
-func (r *UserRepository) DeleteUser(userID uint) error {
+func (r *UserRepository) DeleteUser(userID string) error {
 	return r.DB.Delete(&models.User{}, userID).Error
 }
 

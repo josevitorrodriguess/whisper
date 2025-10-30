@@ -22,3 +22,8 @@ func (s *UserService) CreateUser(u *models.User) (*models.User, error) {
 	}
 	return s.repo.GetByFirebaseUID(u.ID)
 }
+
+
+func (s *UserService) DeleteUser(userID string) error {
+	return s.repo.DeleteUser(userID)
+}
