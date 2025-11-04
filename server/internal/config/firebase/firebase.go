@@ -2,24 +2,26 @@ package firebase
 
 import (
 	"context"
-	"fmt"
 	"os"
 
 	firebase "firebase.google.com/go/v4"
+	"firebase.google.com/go/v4/auth"
 	"google.golang.org/api/option"
 )
 
-func GetFireBaseApp() (*firebase.App, error) {
-	path := os.Getenv("FIREBASE_CREDENTIALS_PATH")
-	if path == "" {
-		return nil, fmt.Errorf("FIREBASE_CREDENTIALS_PATH environment variable is not set")
-	}
+var firebaseAuth *auth.Client
 
-	opt := option.WithCredentialsFile(path)
-
+func InitFirebase() error {
+	opt := option.WithCredentialsFile(os.Getenv("FIREBASE_CREDENTIALS_PATH"))
 	app, err := firebase.NewApp(context.Background(), nil, opt)
 	if err != nil {
-		return nil, fmt.Errorf("error initializing app: %v", err)
+		return err
 	}
-	return app, nil
+
+	firebaseAuth, err = app.Auth(context.Background())
+	return err
+}
+
+func VerifyToken(idToken string) (*auth.Token, error) {
+	return firebaseAuth.VerifyIDToken(context.Background(), idToken)
 }

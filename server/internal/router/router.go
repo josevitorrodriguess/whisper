@@ -4,14 +4,13 @@ import (
 	"net/http"
 	"time"
 
-	firebase "firebase.google.com/go/v4"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/josevitorrodriguess/whisper/server/internal/handler"
 	"github.com/josevitorrodriguess/whisper/server/internal/middlewares"
 )
 
-func SetupRouter(userHandler *handler.UserHandler, firebaseApp *firebase.App) *gin.Engine {
+func SetupRouter(userHandler *handler.UserHandler) *gin.Engine {
 	r := gin.Default()
 
 	r.Use(cors.New(cors.Config{
@@ -29,10 +28,10 @@ func SetupRouter(userHandler *handler.UserHandler, firebaseApp *firebase.App) *g
 
 	user := r.Group("/user")
 	{
-		user.Use(middlewares.FirebaseAuthMiddleware(firebaseApp))
-
-		user.POST("/register", userHandler.RegisterUserHandler)
-		user.DELETE("/delete", userHandler.DeleteAccountHandler)
+		user.Use(middlewares.AuthMiddleware())
+		user.GET("/check", func(c *gin.Context) {
+			c.JSON(http.StatusOK, gin.H{"deu certo": "cuida"})
+		})
 	}
 
 	return r
