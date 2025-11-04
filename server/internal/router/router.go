@@ -24,7 +24,7 @@ func SetupRouter(userHandler *handler.UserHandler, firebaseApp *firebase.App) *g
 	}))
 
 	r.GET("/", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"status": "API is running 🚀"})
+		c.JSON(http.StatusOK, gin.H{"status": "API is running"})
 	})
 
 	user := r.Group("/user")
