@@ -28,10 +28,7 @@ func SetupRouter(userHandler *handler.UserHandler) *gin.Engine {
 
 	user := r.Group("/user")
 	{
-		user.Use(middlewares.AuthMiddleware())
-		user.GET("/check", func(c *gin.Context) {
-			c.JSON(http.StatusOK, gin.H{"deu certo": "cuida"})
-		})
+		user.POST("/login", userHandler.SignIn).Use(middlewares.AuthMiddleware())
 	}
 
 	return r
